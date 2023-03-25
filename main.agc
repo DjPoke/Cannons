@@ -29,10 +29,13 @@ SetRawMouseVisible(0)
 CompleteRawJoystickDetection()
 
 // constants
-#Constant TOP_EDGE 40
-#Constant BOTTOM_EDGE 168
-#Constant LEFT_EDGE 32
-#Constant RIGHT_EDGE 288
+#Constant START_LEVEL = 1
+#Constant LAST_LEVEL = 8
+
+#Constant TOP_EDGE = 40
+#Constant BOTTOM_EDGE = 168
+#Constant LEFT_EDGE = 32
+#Constant RIGHT_EDGE = 288
 
 #Constant MAX_BALL_SPEED = 12
 
@@ -131,7 +134,7 @@ Do
 	StopMusicOGG(1)
 
 	// init game
-	level = 1
+	level = START_LEVEL
 	score = 0
 
 	UpdateLevel()
@@ -206,22 +209,46 @@ Do
 		If GetRawJoystickExists(1)
 			// move horizontally
 			If GetRawJoystickX(1) < -0.5
-				If px > LEFT_EDGE
+				correction = 0
+				
+				If level >= 7
+					correction = 16
+				Endif
+
+				If px > LEFT_EDGE - correction
 					Dec px, 2
 				Endif
 			Elseif GetRawJoystickX(1) > 0.5
-				If px < RIGHT_EDGE
+				correction = 0
+				
+				If level >= 7
+					correction = 16
+				Endif
+				
+				If px < RIGHT_EDGE + correction
 					Inc px, 2
 				Endif
 			Endif
 
 			// move vertically
 			If GetRawJoystickY(1) < -0.5
-				If py > TOP_EDGE
+				correction = 0
+				
+				If level >= 5
+					correction = 16
+				Endif
+
+				If py > TOP_EDGE - correction
 					Dec py, 2
 				Endif
 			Elseif GetRawJoystickY(1) > 0.5
-				If py < BOTTOM_EDGE
+				correction = 0
+				
+				If level >= 3
+					correction = 16
+				Endif
+				
+				If py < BOTTOM_EDGE + correction
 					Inc py, 2
 				Endif
 			Endif
@@ -271,22 +298,46 @@ Do
 
 		// move horizontally
 		If GetRawKeyState(37) = 1
-			If px > LEFT_EDGE
+			correction = 0
+				
+			If level >= 7
+				correction = 16
+			Endif
+
+			If px > LEFT_EDGE - correction
 				Dec px, 2
 			Endif
 		Elseif GetRawKeyState(39) = 1
-			If px < RIGHT_EDGE
+			correction = 0
+				
+			If level >= 7
+				correction = 16
+			Endif
+				
+			If px < RIGHT_EDGE + correction
 				Inc px, 2
 			Endif
 		Endif
 
 		// move vertically
 		If GetRawKeyState(38) = 1
-			If py > TOP_EDGE
+			correction = 0
+				
+			If level >= 5
+				correction = 16
+			Endif
+
+			If py > TOP_EDGE - correction
 				Dec py, 2
 			Endif
 		Elseif GetRawKeyState(40) = 1
-			If py < BOTTOM_EDGE
+			correction = 0
+				
+			If level >= 3
+				correction = 16
+			Endif
+				
+			If py < BOTTOM_EDGE + correction
 				Inc py, 2
 			Endif
 		Endif
@@ -398,7 +449,7 @@ Do
 			
 			Inc level
 			
-			If level > 8 Then level = 1
+			If level > LAST_LEVEL Then level = START_LEVEL
 			
 			UpdateLevel()
 		Endif
@@ -416,17 +467,19 @@ Do
 	DeleteAllSprites()
 	DeleteAllText()
 	
-	// show score at game over...
-	CreateText(1, "Score: " + Str(score) + Chr(10) + "Level: "+ Str(level))
-	SetTextAlignment(1, 1)
-	SetTextSize(1, 16)
-	SetTextPosition(1, 160, 80)
+	If time = 0	
+		// show score at game over...
+		CreateText(1, "Score: " + Str(score) + Chr(10) + "Level: "+ Str(level))
+		SetTextAlignment(1, 1)
+		SetTextSize(1, 16)
+		SetTextPosition(1, 160, 80)
 
-   	Sync()
+	   	Sync()
    	
-   	Delay(4000)
+ 	  	Delay(4000)
    	
-   	DeleteText(1)
+  	 	DeleteText(1)
+  	 Endif
 Loop
 
 End
